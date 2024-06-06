@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistical Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    input[type="text"], input[type="button"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #results {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <input type="text" id="numbers" placeholder="Enter numbers separated by commas">
+    <input type="button" value="Calculate" onclick="calculateStats()">
+    <div id="results"></div>
+</div>
+
+<script>
+function calculateStats() {
+    var numbersInput = document.getElementById("numbers").value;
+    var numbers = numbersInput.split(",").map(function(item) {
+        return parseFloat(item.trim());
+    });
+
+    var mean = calculateMean(numbers);
+    var median = calculateMedian(numbers);
+    var standardDeviation = calculateStandardDeviation(numbers);
+    var interquartileRange = calculateInterquartileRange(numbers);
+
+    var resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<p>Mean: " + mean.toFixed(2) + "</p>";
+    resultsDiv.innerHTML += "<p>Median: " + median.toFixed(2) + "</p>";
+    resultsDiv.innerHTML += "<p>Standard Deviation: " + standardDeviation.toFixed(2) + "</p>";
+    resultsDiv.innerHTML += "<p>Interquartile Range: " + interquartileRange.toFixed(2) + "</p>";
+}
+
+function calculateMean(numbers) {
+    var sum = numbers.reduce(function(total, num) {
+        return total + num;
+    }, 0);
+    return sum / numbers.length;
+}
+
+function calculateMedian(numbers) {
+    var sorted = numbers.slice().sort(function(a, b) {
+        return a - b;
+    });
+    var middle = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+        return (sorted[middle - 1] + sorted[middle]) / 2;
+    } else {
+        return sorted[middle];
+    }
+}
+
+function calculateStandardDeviation(numbers) {
+    var mean = calculateMean(numbers);
+    var squareDiffs = numbers.map(function(num) {
+        var diff = num - mean;
+        return diff * diff;
+    });
+    var avgSquareDiff = calculateMean(squareDiffs);
+    return Math.sqrt(avgSquareDiff);
+}
+
+function calculateInterquartileRange(numbers) {
+    var sorted = numbers.slice().sort(function(a, b) {
+        return a - b;
+    });
+    var q1 = calculateMedian(sorted.slice(0, Math.floor(sorted.length / 2)));
+    var q3 = calculateMedian(sorted.slice(Math.ceil(sorted.length / 2)));
+    return q3 - q1;
+}
+</script>
+
+</body>
+</html>
